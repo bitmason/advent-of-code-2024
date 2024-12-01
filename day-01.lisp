@@ -1,10 +1,10 @@
 #!/usr/bin/env -S sbcl --core setup.core --script
 
-;;;; Advent Of Code Day 01
+;;;; Advent Of Code 2024: Day 01
 ;;;; Solution by Darren Stone <dstone at bitmason dot com>
 ;;;; Written in Common Lisp. Using Emacs. By hand. Without fucking AI.
 
-(Load "input.lisp")
+(load "input.lisp")
 
 (defvar pairs (loop for line in *input-lines*
 		    collect (mapcar #'parse-integer
