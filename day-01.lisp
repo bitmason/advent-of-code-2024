@@ -4,19 +4,20 @@
 ;;;; Solution by Darren Stone <dstone at bitmason dot com>
 ;;;; Written in Common Lisp. Using Emacs. By hand. Without fucking AI.
 
-(load "input.lisp")
+(Load "input.lisp")
 
 (defvar pairs (loop for line in *input-lines*
-		    collect (mapcar #'parse-integer (str:split " " line :omit-nulls t))))
+		    collect (mapcar #'parse-integer
+				    (str:split " " line :omit-nulls t))))
 (defvar left (mapcar #'first pairs))
 (defvar right (mapcar #'second pairs))
 (defvar left-sorted (sort (copy-list left) #'<))
 (defvar right-sorted (sort (copy-list right) #'<))
 
 (format t "Part 1: ~a~%" (loop for a in left-sorted
-      for b in right-sorted
-      sum (abs (- a b))))
+			       for b in right-sorted
+			       sum (abs (- a b))))
 
 (format t "Part 2: ~a~%" (loop for n in left
 			       sum (* n (loop for m in right
-						      when (equal n m) count it))))
+					      when (equal n m) count it))))
