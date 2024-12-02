@@ -1,7 +1,7 @@
 ;;;; Load this at start of each day-NN.lisp file.
 
-;;;; This sets some useful variables by parsing input into various
-;;;; structures that might be useful. Lists, arrays, integers, etc.
+;;;; Some variables and functions related to the day's problem input, delivering
+;;;; various structures that might be useful. e.g. lists, arrays, integers, etc.
 
 ;;;; Input filename will be based on the day-NN in the source file name
 ;;;; and commandline args can override this for test input.
@@ -40,9 +40,8 @@
   (format t "Can't open file~%")
   (uiop:quit 1))
 
-
 ;;; ===========================================================================
-;;; Input available in an assortment of structures follows.
+;;; Input parsed into an assortment of structures
 ;;; ===========================================================================
 
 ;;; All input in one string
@@ -74,13 +73,13 @@
 (defvar *width* (length (first *input-as-list-of-strings*)))
 
 ;;; 2D array. Row-major. Elements are chars.
-(defvar *input-as-2d-array-of-chars*
+(defun input-as-2d-array-of-chars ()
   (make-array (list *height* *width*) :initial-contents
-	      (loop for row in *input-as-list-of-strings*
-		    collect (loop for c across row collect c))))
+ 	      (loop for row in *input-as-list-of-strings*
+ 		    collect (loop for c across row collect c))))
 
 ;;; 2D array. Row-major. Elements are digits parsed to integers 0-9.
-(defvar *input-as-2d-array-of-integers*
+(defun input-as-2d-array-of-integers ()
   (make-array (list *height* *width*) :initial-contents
 	      (loop for row in *input-as-list-of-strings*
 		    collect (loop for n across row
