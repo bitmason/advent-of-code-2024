@@ -6,9 +6,7 @@
 
 (load "input.lisp")
 
-(defvar pairs (loop for line in *input-lines*
-		    collect (mapcar #'parse-integer
-				    (str:split " " line :omit-nulls t))))
+(defvar pairs (input-as-list-of-lists-of-integers))
 (defvar left (mapcar #'first pairs))
 (defvar right (mapcar #'second pairs))
 (defvar left-sorted (sort (copy-list left) #'<))

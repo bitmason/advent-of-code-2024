@@ -1,27 +1,22 @@
 ;;;; Load this at start of each day-NN.lisp file.
-;;;; Provides several globals including *input* and *input-lines* based
-;;;; on NN and optional command line args.
+
+;;;; This sets some useful variables by parsing input into various
+;;;; structures that might be useful. Lists, arrays, integers, etc.
+
+;;;; Input filename will be based on the day-NN in the source file name
+;;;; and commandline args can override this for test input.
+
+;;;; Examples:
 ;;;;
-;;;; Examples of commandline usage and the stream that will be read to
-;;;; provide a list of strings as input to the solver.
-;;;;
-;;;; % ./day-01.lisp
-;;;; Reading input from day-01-input.txt
-;;;;
-;;;; % ./day-01.lisp test
-;;;; Reading input from day-01-test.txt
-;;;;
-;;;; % ./day-05-part-2.lisp
-;;;; Reading input from day-05-input.txt
-;;;;
-;;;; % ./day-05-part-2.lisp part-2
-;;;; Reading input from day-05-part-2.txt
-;;;;
-;;;; % ./day-03.lisp -
-;;;; Reading input from stdin
+;;;; % ./day-01.lisp  ==>  Reading input from day-01-input.txt
+;;;; % ./day-01.lisp test  ==>  Reading input from day-01-test.txt
+;;;; % ./day-05-part-2.lisp  ==>  Reading input from day-05-input.txt
+;;;; % ./day-05-part-2.lisp part-2  ==>  Reading input from day-05-part-2.txt
+;;;; % ./day-03.lisp  -  ==>  Reading input from stdin
 
 ;;; typically "day-NN", derived from compiling/executing filename
 (defvar *day-name* (cadr (str:rsplit "/" (uiop:split-name-type (uiop:getenv "_")) :limit 2)))
+(if *day-name* (format t "~a~%" (str:upcase *day-name*)))
     
 ;;; argv[1] or "input" if not supplied (may be "-" if stdin requested)
 (defvar *input-arg* (or (car (uiop:command-line-arguments)) "input"))
@@ -34,11 +29,8 @@
 	  (format nil "~a-~a.txt" *day-name* *input-arg*)
 	  (format nil "~a.txt" *input-arg*))))
 
-(if *day-name* (format t "~a~%" (str:upcase *day-name*)))
-
-(format t "Reading input from ~a~%" *input-filename*)
-
 ;;; Open file or stdin
+(format t "Reading input from ~a~%" *input-filename*)
 (defvar *input-stream*
   (if (equal *input-arg* "-")
       *standard-input*
@@ -48,14 +40,48 @@
   (format t "Can't open file~%")
   (uiop:quit 1))
 
+
+;;; ===========================================================================
+;;; Input available in an assortment of structures follows.
+;;; ===========================================================================
+
 ;;; All input in one string
-(defvar *input*
+(defvar *input-as-string*
   (if *input-stream*
       (uiop:slurp-stream-string *input-stream*)
       ""))
 
-;;; List of strings read from file or stdin
-(defvar *input-lines*
-  (str:lines *input*))
+;;; List. Each line as a string.
+(defvar *input-as-list-of-strings*
+  (str:lines *input-as-string*))
 
-(format t "Input contains ~a characters in ~a lines~%" (length *input*) (length *input-lines*))
+(format t "Input contains ~a characters in ~a lines~%"
+	(length *input-as-string*)
+	(length *input-as-list-of-strings*))
+
+;;; List. Each line as a list of strings, parsed with space or other separator.
+(defun input-as-list-of-lists-of-strings (&key (separator " ") (omit-nulls t))
+  (loop for line in *input-as-list-of-strings*
+	collect (str:split separator line :omit-nulls omit-nulls)))
+
+;;; List. Each line as a list of integers, parsed with space or other delimeter.
+(defun input-as-list-of-lists-of-integers (&key (separator " ") (omit-nulls t))
+  (loop for line in (input-as-list-of-lists-of-strings :separator separator :omit-nulls omit-nulls)
+	collect (mapcar #'parse-integer line)))
+
+;;; The following make sense if the input can be parsed as a rectangular array.
+(defvar *height* (length *input-as-list-of-strings*))
+(defvar *width* (length (first *input-as-list-of-strings*)))
+
+;;; 2D array. Row-major. Elements are chars.
+(defvar *input-as-2d-array-of-chars*
+  (make-array (list *height* *width*) :initial-contents
+	      (loop for row in *input-as-list-of-strings*
+		    collect (loop for c across row collect c))))
+
+;;; 2D array. Row-major. Elements are digits parsed to integers 0-9.
+(defvar *input-as-2d-array-of-integers*
+  (make-array (list *height* *width*) :initial-contents
+	      (loop for row in *input-as-list-of-strings*
+		    collect (loop for n across row
+				  collect (- (char-code n) (char-code #\0))))))
