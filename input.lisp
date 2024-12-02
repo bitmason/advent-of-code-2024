@@ -1,13 +1,14 @@
-;;;; Load this at start of each day-NN.lisp file.
-
-;;;; Some variables and functions related to the day's problem input, delivering
-;;;; various structures that might be useful. e.g. lists, arrays, integers, etc.
+;;;; Advent of Code 2024: Handy input utilities!
+;;;; Darren Stone < dstone at bitmason dot com >
+;;;;
+;;;; I load this at start of each day-NN.lisp file to deliver some variables
+;;;; and functions related to that day's problem or test input, creating various
+;;;; data structures that might be useful. e.g. lists, arrays, integers, etc.
 
 ;;;; Input filename will be based on the day-NN in the source file name
 ;;;; and commandline args can override this for test input.
-
-;;;; Examples:
 ;;;;
+;;;; Examples:
 ;;;; % ./day-01.lisp  ==>  Reading input from day-01-input.txt
 ;;;; % ./day-01.lisp test  ==>  Reading input from day-01-test.txt
 ;;;; % ./day-05-part-2.lisp  ==>  Reading input from day-05-input.txt
