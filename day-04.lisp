@@ -21,7 +21,7 @@
 (defvar x-offs '(((0 0) (1 1) (2 2))
 		 ((2 0) (1 1) (0 2))))
   
-;; count of XMAS at given position in grid (i.e. 0..8))
+;; Part 1: count of XMAS at given position in grid (i.e. 0..8))
 (defun xmas-count-at (y x)
   (loop for dir in dir-offs
 	sum (loop for (dy dx) in (cons '(0 0) dir)
@@ -34,7 +34,7 @@
 		    return 0
 		  finally (return 1))))
 
-;; is X-MAS at given position in grid?
+;; Part 2: is X-MAS at given position in grid?
 (defun x-mas-at-p (y x)
   (= 2 (loop for dir in x-offs
 		 count (loop for (dy dx) in dir
