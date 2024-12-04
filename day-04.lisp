@@ -7,17 +7,17 @@
 
 (defvar grid (input-as-2d-array-of-chars))
 
-; shape for Part 1
-(defvar dir-offs '(((-1 0) (-2 0) (-3 0))
-		   ((-1 1) (-2 2) (-3 3))
-		   ((0 1) (0 2) (0 3))
-		   ((1 1) (2 2) (3 3))
-		   ((1 0) (2 0) (3 0))
-		   ((1 -1) (2 -2) (3 -3))
-		   ((0 -1) (0 -2) (0 -3))
+; possible lines for Part 1
+(defvar dir-offs '(((-1  0) (-2  0) (-3  0))
+		   ((-1  1) (-2  2) (-3  3))
+		   (( 0  1) ( 0  2) ( 0  3))
+		   (( 1  1) ( 2  2) ( 3  3))
+		   (( 1  0) ( 2  0) ( 3  0))
+		   (( 1 -1) ( 2 -2) ( 3 -3))
+		   (( 0 -1) ( 0 -2) ( 0 -3))
 		   ((-1 -1) (-2 -2) (-3 -3))))
 
-; shape for Part 2
+; the shape for Part 2
 (defvar x-offs '(((0 0) (1 1) (2 2))
 		 ((2 0) (1 1) (0 2))))
   
@@ -34,8 +34,8 @@
 		    return 0
 		  finally (return 1))))
 
-;; count of X-MAS at given position in grid (i.e. 0..8))
-(defun x-mas-count-at (y x)
+;; is X-MAS at given position in grid?
+(defun x-mas-at-p (y x)
   (= 2 (loop for dir in x-offs
 		 count (loop for (dy dx) in dir
 			      for c across "MAS" with mas = 0
@@ -54,7 +54,7 @@
 (loop for y from 0 to (- *height* 1)
       do (loop for x from 0 to (- *width* 1)
 	       do (incf xmas-count (xmas-count-at y x))
-		  (if (x-mas-count-at y x) (incf x-mas-count))))
+		  (if (x-mas-at-p y x) (incf x-mas-count))))
 
 (format t "Part 1: ~a~%" xmas-count)
 (format t "Part 2: ~a~%" x-mas-count)
