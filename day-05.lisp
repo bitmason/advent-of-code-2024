@@ -9,17 +9,19 @@
 		    while r
 		    collect (mapcar #'parse-integer r)))
 
+;;; return non-nil iff update is in correct order
 (defun correct-p (update)
   (loop for (a b) in rules
 	always (< (or (position a update) -1)
 		  (or (position b update) 99999))))
 
+;;; return corrected version of the update
 (defun corrected (update)
   (loop for (a b) in rules
 	finally (return update)
 	when (> (or (position a update) -1)
 		(or (position b update) 99999))
-	  return (corrected (cons a (remove a update)))))
+	  return (corrected (cons a (remove a update))))) ; tail recursive
 
 (format t "(Part_1 Part_2):  ~a~%"
 	(loop for u-str in (subseq (input-as-list-of-lists-of-strings :separator ",")
