@@ -5,49 +5,34 @@
 
 (load "input.lisp")
 
+;; instruction sets
+(defvar isa-part-1 '(
+  ("^mul\\((\\d+),(\\d+)\\)" (lambda (x y) (incf accumulator (* x y))))))
+(defvar isa-part-2 '(
+  ("^mul\\((\\d+),(\\d+)\\)" (lambda (x y) (when mul-enabled (incf accumulator (* x y)))))
+  ("^do\\(\\)"               (lambda ()    (setf mul-enabled t)))
+  ("^don't\\(\\)"            (lambda ()    (setf mul-enabled nil)))))
+
 ;; registers
 (defparameter accumulator 0)
 (defparameter mul-enabled t)
-(defparameter isa nil)
 
-;; instruction sets
-(defvar isa-part-1 '(
-  ("mul"    2  (lambda (x y) (incf accumulator (* x y))))))
-(defvar isa-part-2 '(
-  ("mul"    2  (lambda (x y) (when mul-enabled (incf accumulator (* x y)))))
-  ("do"     0  (lambda ()    (setf mul-enabled t)))
-  ("don't"  0  (lambda ()    (setf mul-enabled nil)))))
+;;; run program text from position with given isa
+(defun run (isa text &optional (pos 0))
+  (if (< pos (length text))
+  (run isa text
+       (loop for (instruc exec) in isa
+	     finally (return (1+ pos)) ; no match; continue
+             do	(multiple-value-bind (matched groups) (re:scan-to-strings instruc text :start pos)
+		  (when matched
+		    (let ((args (map 'list #'(lambda (s) (parse-integer s :junk-allowed t)) groups)))
+		      (apply (coerce exec 'function) args))
+		    (return (+ pos (length matched))))))))) ; matched; contine after match
 
-(defun cpu-reset (new-isa)
-  (setf isa new-isa)
-  (setf accumulator 0)
-  (setf mul-enabled t))
-
-;;; Parse next resemblence of an instruction, return values: op args pos-next (or nil if none).
-(defun next-potential-elem (text pos)
-  (multiple-value-bind (matched groups) (re:scan-to-strings ".*?([a-z']+)\\(([\\d,]*)\\)" text :start pos)
-    (when matched
-      (let ((op (aref groups 0))
-	    (args (if (equal (aref groups 1) "")  ; no args
-		      nil
-		      (mapcar #'(lambda (s) (parse-integer s :junk-allowed t)) (str:split "," (aref groups 1))))))
-	(if (every #'(lambda (v) (and v)) args)
-	    (values op args (+ pos (length matched)))  ; opcode is stringy, args are inty
-	    (next-potential-elem text (+ pos (length matched))))))))  ; keep looking
-
-;;; Run program text from position.
-(defun run (text &optional (pos 0))
-  (if (and text pos)  ; end of program text
-      (multiple-value-bind (op args pos-next) (next-potential-elem text pos)
-	(if op (loop for (op-test argc exec) in isa
-		     when (and (str:ends-with-p op-test op) (= argc (length args)))
-		       do (apply (coerce exec 'function) args)))
-	(run text pos-next))))  ; continue run, tail recursive
-
-(cpu-reset isa-part-1)
-(run *input-as-string*)
+(run isa-part-1 *input-as-string*)
 (format t "Part 1: ~a~%" accumulator)
 
-(cpu-reset isa-part-2)
-(run *input-as-string*)
+(setf accumulator 0)
+(setf mul-enabled t)
+(run isa-part-2 *input-as-string*)
 (format t "Part 2: ~a~%" accumulator)
