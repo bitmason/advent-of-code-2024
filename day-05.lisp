@@ -15,11 +15,11 @@
 		  (or (position b update) 99999))))
 
 (defun corrected (update)
-      (loop for (a b) in rules
-	    finally (return update)
-	    when (> (or (position a update) -1)
-		    (or (position b update) 99999))
-	      return (corrected (cons a (remove a update)))))
+  (loop for (a b) in rules
+	finally (return update)
+	when (> (or (position a update) -1)
+		(or (position b update) 99999))
+	  return (corrected (cons a (remove a update)))))
 
 (format t "(Part_1 Part_2):  ~a~%"
 	(loop for u-str in (subseq (input-as-list-of-lists-of-strings :separator ",")
