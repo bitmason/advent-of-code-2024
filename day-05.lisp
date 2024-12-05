@@ -5,9 +5,8 @@
 
 (load "input.lisp")
 
-(defvar rules (loop for r in (input-as-list-of-lists-of-strings :separator "|")
-		    while r
-		    collect (mapcar #'parse-integer r)))
+(defvar rules (loop for r in (input-as-list-of-lists-of-integers :separator "|")
+		    while r collect r))  ; skip update section
 
 ;;; return non-nil iff update is in correct order
 (defun correct-p (update)
@@ -25,12 +24,10 @@
 	  return (corrected (cons a (remove a update)))))  ; tail recursive
 
 (format t "(Part_1 Part_2):  ~a~%"
-	(loop for u-str in (subseq (input-as-list-of-lists-of-strings :separator ",")
-				   (1+ (length rules)))
-	      with sum-correct-mids = 0
-	      with sum-corrected-mids = 0
+	(loop for u in (subseq (input-as-list-of-lists-of-integers :separator ",")
+			       (1+ (length rules)))  ; skip rules section
 	      finally (return (list sum-correct-mids sum-corrected-mids))
-	      do (let ((u (mapcar #'parse-integer u-str)))
-		   (if (correct-p u)
-		       (incf sum-correct-mids (nth (truncate (length u) 2) u))
-		       (incf sum-corrected-mids (nth (truncate (length u) 2) (corrected u)))))))
+	      if (correct-p u)
+		sum (nth (truncate (length u) 2) u) into sum-correct-mids
+	      else
+		sum (nth (truncate (length u) 2) (corrected u)) into sum-corrected-mids))

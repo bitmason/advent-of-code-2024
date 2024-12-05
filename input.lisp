@@ -67,7 +67,7 @@
 ;;; List. Each line as a list of integers, parsed with space or other delimeter.
 (defun input-as-list-of-lists-of-integers (&key (separator " ") (omit-nulls t))
   (loop for line in (input-as-list-of-lists-of-strings :separator separator :omit-nulls omit-nulls)
-	collect (mapcar #'parse-integer line)))
+	collect (mapcar #'(lambda (n) (parse-integer n :junk-allowed t)) line)))
 
 ;;; The following make sense if the input can be parsed as a rectangular array.
 (defvar *height* (length *input-as-list-of-strings*))
