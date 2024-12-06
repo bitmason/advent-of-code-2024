@@ -20,7 +20,7 @@
 ;;; run program text from position with given isa
 (defun run (isa text &optional (pos 0))
   (if (< pos (length text))
-  (run isa text
+    (run isa text
        (loop for (instruc exec) in isa
 	     finally (return (1+ pos)) ; no match; continue
              do	(multiple-value-bind (matched groups) (re:scan-to-strings instruc text :start pos)
