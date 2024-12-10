@@ -11,8 +11,8 @@
 (defparameter trails-seen nil) ; track unique trailhead-to-peak trails
 (defun trail-seen-p (th-y th-x peak-y peak-x) (position (list th-y th-x peak-y peak-x) trails-seen :test #'equal))
 
-;;; # peaks reachable from given position via valid hiking trail
-;;; optional: pass with trailhead x,y tracked for Part 1 (or nil for Part 2)
+;;; # peaks reachable from given position via valid hiking trail,
+;;; call with trailhead x,y tracked for Part 1 (or nil for Part 2)
 (defun th-score (th-y th-x this-y this-x elev-need)
   (if (or (< this-y 0) (>= this-y *height*) (< this-x 0) (>= this-x *width*))
       0  ; out of bounds
