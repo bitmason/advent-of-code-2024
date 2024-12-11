@@ -24,7 +24,7 @@
 		       ((= (mod (length s) 2) 0)  ; even length -> 1st half, 2nd half
 			(hash-inc new-count (parse-integer (subseq s 0 (/ (length s) 2))) c)
 			(hash-inc new-count (parse-integer (subseq s (/ (length s) 2))) c))
-		       (t (hash-inc new-count (* n 2024) c)))))  ; else
+		       (t (hash-inc new-count (* n 2024) c)))))  ; else -> * 2048
     new-count))
 
 (defun value-count (h)
@@ -32,7 +32,7 @@
 
 (defparameter new-count nil)
 (loop for blinks in '(25 75)
-      for part from 1 by 1
+      for part from 1
       do (setf new-count orig-count)
 	 (loop repeat blinks do (setf new-count (blink new-count)))
 	 (format t "Part ~a: ~a~%" part (value-count new-count)))
