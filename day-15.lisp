@@ -63,3 +63,5 @@
       do (apply-move m))
 
 (format t "Part 1: ~a~%" (sum-of-box-gps))
+
+;;; TODO: Part 2
