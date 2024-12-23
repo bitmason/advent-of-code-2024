@@ -85,3 +85,4 @@
 	      (loop for row in *input-as-list-of-strings*
 		    collect (loop for n across row
 				  collect (- (char-code n) (char-code #\0))))))
+
